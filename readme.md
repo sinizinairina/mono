@@ -1,19 +1,8 @@
-Web Framework, Ruby on Rails clone.
+Ruby on Rails clone in NodeJS http://monojs.org
 
-# TODO
+Contributors
 
-# Examples
+- Sake Buhayda
+- Alex Craft
 
-- https://github.com/qiushibaike/moumentei
-- Domain monitor
-- Dashboard with JS widgets (bitcoin cource, twitter feed, ...)
-- Job Board (with my resume)
-- Mobilify websites
-
-# Notes
-
-find . -name "*.coffee" | grep -v -e "./node_modules" -e "./test" | xargs cat > all.coffee
-
-Nice website theme http://internations.github.com/antwort/index.html
-
-Copyright (c) Sinizina Irina.
+Copyright (c) Sinizina Irina, released under the MIT license.
