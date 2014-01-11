@@ -27,7 +27,8 @@ _.mixin
     return true if obj == null or obj == undefined
     return obj.length == 0 if _.isArray obj
     return /^\s*$/.test obj if _.isString obj
-    return false for own k in obj
+    return false for own k of obj
+    return true
 
   isPresent: (obj) -> !_.isBlank(obj)
 
