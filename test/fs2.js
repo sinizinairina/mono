@@ -10,7 +10,7 @@ describe("fs2", function(){
   // Creating and removing empty tmp directory.
   var tmpDir = null
   beforeEach(function(next){
-    fs2.getTemporarryDirectory(fork(next, function(dir){
+    fs2.getTemporaryDirectory(fork(next, function(dir){
       tmpDir = dir
       next()
     }))
@@ -141,8 +141,8 @@ describe("fs2", function(){
     }))
   })
 
-  it("createTemporarryDirectory should create empty temporarry directory", function(next){
-    fs2.getTemporarryDirectory(fork(next, function(tmpDir){
+  it("createTemporaryDirectory should create empty temporarry directory", function(next){
+    fs2.getTemporaryDirectory(fork(next, function(tmpDir){
       expect(tmpDir).to.be.a('string')
       next()
     }))

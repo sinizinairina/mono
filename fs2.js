@@ -14,7 +14,7 @@
 // - writeFileAtomically should atomically write or overwrite file and create parents if needed
 // - readDirectory should list directory content recursively
 // - copy should copy or overwrite file and create parents if needed
-// - createTemporarryDirectory should create empty temporarry directory
+// - createTemporaryDirectory should create empty temporarry directory
 
 var fs     = require('fs')
 var fsPath = require('path')
@@ -248,7 +248,7 @@ fs2.copy = function(from, to, cb){
 }
 
 // Get empty temporarry directory.
-fs2.getTemporarryDirectory = function(cb){
+fs2.getTemporaryDirectory = function(cb){
   var tmpDir = os.tmpDir()
   tmpDir = tmpDir.slice(0, (tmpDir.length - 1))
   fs2.deleteDirectory(tmpDir, fork(cb, function(){
@@ -336,7 +336,7 @@ sync(fs2,
   'writeFile',
   'stat',
 
-  'getTemporarryDirectory',
+  'getTemporaryDirectory',
 
   'close',
   'createReadStream',

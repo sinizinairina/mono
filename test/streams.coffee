@@ -11,7 +11,7 @@ fs2 = require '../fs2'
 describe "streams", ->
   tmpDir = null
   beforeEach async ->
-    tmpDir = fs2.getTemporarryDirectory()
+    tmpDir = fs2.getTemporaryDirectory()
 
   it "should read file", async ->
     path = "#{tmpDir}/some.txt"
