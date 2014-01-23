@@ -526,7 +526,12 @@ body {
 .section .section-heading {
   font-size: 42px;
   line-height: 42px;
+  margin-bottom: 30px;
   /*margin-top: -32px; margin-bottom: -32px;*/
+}
+.section .section-subheading {
+  color: gray;
+  margin-bottom: -32px;
 }
 .section .section-image {
   text-align: center;
