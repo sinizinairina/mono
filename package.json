@@ -1,7 +1,7 @@
 {
   "name"         : "mono",
   "main"         : "./mono",
-  "version"      : "1.0.2",
+  "version"      : "1.0.3",
   "homepage"     : "http://monojs.org",
   "dependencies" : {
     "coffee-script" : "1.6.2",

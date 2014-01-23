@@ -25,6 +25,7 @@ _.mixin
   # Checking if obj is null or empty collection or empty string.
   isBlank: (obj) ->
     return true if obj == null or obj == undefined
+    return false if isFinite obj
     return obj.length == 0 if _.isArray obj
     return /^\s*$/.test obj if _.isString obj
     return false for own k of obj
