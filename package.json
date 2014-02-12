@@ -1,7 +1,7 @@
 {
   "name"         : "mono",
   "main"         : "./mono",
-  "version"      : "1.0.3",
+  "version"      : "1.0.4",
   "homepage"     : "http://monojs.org",
   "dependencies" : {
     "coffee-script" : "1.6.2",
@@ -19,7 +19,7 @@
 
     "micon" : "1.x.x",
     "synchronize" : "0.5.x",
-    "micromodel": "2.x.x"
+    "micromodel": "2.2.x"
   },
   "devDependencies" : {
     "mocha"  : "1.5.x"

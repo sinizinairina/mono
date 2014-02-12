@@ -47,3 +47,16 @@ _.mixin
   required: (obj, name) ->
     throw new Error "'#{name}' required!" unless obj
     obj
+
+  uniqueBy: (list, value) ->
+    unless _(value).isFunction()
+      attrName = value
+      value = (v) -> v[attrName]
+    sortedList = _(list).sortBy value
+    previousValue = null
+    unique = []
+    for item in sortedList
+      unless (currentValue = value(item)) == previousValue
+        unique.push item
+        previousValue = currentValue
+    unique
