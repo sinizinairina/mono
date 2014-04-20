@@ -7,7 +7,20 @@ app.app = app
 app.p = console.log.bind console
 
 # Logging.
-app[name] = console[name].bind(console) for name in ['log', 'info', 'warn', 'error']
+withZero = (number) -> if number < 10 then "0#{number}" else number
+timestamp = ->
+  date = new Date()
+  "#{date.getFullYear()}/#{withZero(date.getMonth() + 1)}/#{withZero(date.getDate())}" +
+  " #{withZero(date.getHours())}:#{withZero(date.getMinutes())}:#{withZero(date.getSeconds())}"
+for name in ['log', 'info']
+  do (name) ->
+    app[name] = (args...) ->
+      console[name] '  ' + timestamp(), args...
+
+for name in ['warn', 'error']
+  do (name) ->
+    app[name] = (args...) ->
+      console[name] '  ' + timestamp(), name, args...
 
 # Underscore.
 app._ = require './underscore'

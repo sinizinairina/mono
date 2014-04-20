@@ -86,11 +86,13 @@ module.exports = ->
     eco    : eco
     json   : eco
     ms     : mustache
+    xml    : eco
 
   render.formatFamilies =
     html : ['html']
     js   : ['js', 'coffee']
     json : ['json', 'js', 'coffee']
+    xml  : ['xml']
 
   render.templates = {}
 

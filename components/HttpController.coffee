@@ -57,7 +57,7 @@ module.exports = class Controller
     _(options).extend tmp
 
     # Layout.
-    layout = options.layout || @constructor.layout()
+    layout = if options.layout == false then false else options.layout || @constructor.layout()
     @response._renderWithLayout layout, template, options
 
   redirectTo: (args...) -> @response._redirectTo args...

@@ -152,7 +152,10 @@ module.exports = Http = ->
 ResponseMixin = (res) ->
   res._setFormat = (format) ->
     @_format = format
-    @setHeader 'Content-Type', contentType if contentType = mime.lookup(format || '')
+    if contentType = mime.lookup(format || '')
+      # if format == 'json' and !/charset/i.test(contentType)
+      #   contentType = "#{contentType}; charset=utf-8"
+      @set 'Content-Type', contentType
 
   res.sendWithoutJsonFormat = res.send
   res.send = (args...) ->
