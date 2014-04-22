@@ -60,3 +60,5 @@ _.mixin
         unique.push item
         previousValue = currentValue
     unique
+
+  random: (from, to) -> from + Math.floor((to - from + 1) * Math.random())
