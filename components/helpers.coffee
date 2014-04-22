@@ -36,6 +36,13 @@ module.exports = ->
     attrs.href = link
     @tag 'a', attrs, title
 
+  helpers.basicJs = ->
+    unless @_basicJs
+      fs = require 'fs'
+      js = fs.readFileSync require.resolve('./helpers/basic.js')
+      @_basicJs = """<script type="text/javascript">#{js}</script>"""
+    @_basicJs
+
   helpers.pluralize = (count, singular, plural) ->
     "#{count} " + (if count == 1 then singular else plural || _s.pluralize(singular))
 
