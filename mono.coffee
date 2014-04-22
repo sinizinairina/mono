@@ -1,4 +1,5 @@
 module.exports = app = require './support'
+require './mono/actor'
 require './mono/command'
 require './mono/configure'
 require './mono/http'
