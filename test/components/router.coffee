@@ -23,8 +23,7 @@ describe "Router", ->
         expect(@createdNamedPaths[namedRoute](args...)).to.eql path
 
   it "should declare plural resource", ->
-    @router.configure (map) ->
-      map.resource 'posts'
+    @router.resource 'posts'
 
     @checkRoutes [
       ['get:/posts',          'Posts.index']
@@ -44,8 +43,7 @@ describe "Router", ->
     ]
 
   it "should declare singular resource", ->
-    @router.configure (map) ->
-      map.resource 'profile'
+    @router.resource 'profile'
 
     @checkRoutes [
       ['get:/profile',      'Profile.show']
@@ -63,8 +61,7 @@ describe "Router", ->
     ]
 
   it "should declare members and collections", ->
-    @router.configure (map) ->
-      map.resource 'posts', (posts) ->
+    @router.resource 'posts', (posts) ->
         posts.member     'post', action: 'publish'
         posts.collection 'get',  action: 'count'
 
@@ -79,9 +76,8 @@ describe "Router", ->
     ]
 
   it "should declare nested plural resource", ->
-    @router.configure (map) ->
-      map.resource 'posts', (posts) ->
-        posts.resource 'comments'
+    @router.resource 'posts', (posts) ->
+      posts.resource 'comments'
 
     @checkRoutes [
       ['get:/posts',          'Posts.index']
@@ -114,9 +110,8 @@ describe "Router", ->
     ]
 
   it "should declare nested singular resource", ->
-    @router.configure (map) ->
-      map.resource 'profile', (profile) ->
-        profile.resource 'comments'
+    @router.resource 'profile', (profile) ->
+      profile.resource 'comments'
 
     @checkRoutes [
       ['get:/profile/new',  'Profile.new']
@@ -147,11 +142,10 @@ describe "Router", ->
     ]
 
   it "should declare members and collections on nested resource", ->
-    @router.configure (map) ->
-      map.resource 'posts', (posts) ->
-        posts.resource 'comments', (comments) ->
-          comments.member     'post', action: 'publish'
-          comments.collection 'get',  action: 'count'
+    @router.resource 'posts', (posts) ->
+      posts.resource 'comments', (comments) ->
+        comments.member     'post', action: 'publish'
+        comments.collection 'get',  action: 'count'
 
     @checkRoutes [
       ['get:/posts/:postId/comments/count',        'Comments.count']
@@ -164,18 +158,16 @@ describe "Router", ->
     ]
 
   it "should throw error if id required for named path but not provided", ->
-    @router.configure (map) ->
-      map.resource 'posts', (posts) ->
-        posts.resource 'comments'
+    @router.resource 'posts', (posts) ->
+      posts.resource 'comments'
 
     expect(=> @createdNamedPaths.postPath()).to.throw /no.*id.*for.*postPath/
     expect(=> @createdNamedPaths.postCommentsPath()).to.throw /no.*postId.*for.*postCommentsPath/
     expect(=> @createdNamedPaths.postCommentPath('p1')).to.throw /no.*id.*for.*postCommentPath/
 
   it "should allow to set prefix and controller", ->
-    @router.configure (map) ->
-      map.resource 'posts', controller: 'SomeSpecialPosts'
-      , prefix: '/special', namedRoutePrefix: 'someSpecial'
+    @router.resource 'posts', controller: 'SomeSpecialPosts'
+    , prefix: '/special', namedRoutePrefix: 'someSpecial'
 
     @checkRoutes [
       ['get:/special/posts',     'SomeSpecialPosts.index']
@@ -188,10 +180,9 @@ describe "Router", ->
     ]
 
   it "should declare deep nested plural resource", ->
-    @router.configure (map) ->
-      map.resource 'users', (users) ->
-        users.resource 'posts', (posts) ->
-          posts.resource 'comments'
+    @router.resource 'users', (users) ->
+      users.resource 'posts', (posts) ->
+        posts.resource 'comments'
 
     @checkRoutes [
       ['get:/users/:userId/posts/:postId/comments', 'Comments.index']

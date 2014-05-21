@@ -23,7 +23,7 @@ for name in ['log', 'info', 'warn', 'error']
         else console[name] '  ', args...
       else
         args = removeNewlines args
-        if name == 'error' then console[name] timestamp(), args...
+        if name == 'error' then console[name] name, timestamp(), args...
         else console[name] '  ', timestamp(), args...
 
 # Underscore.
@@ -34,3 +34,11 @@ app._s = require './underscore.string'
 
 # Sync.
 app.sync = require 'synchronize'
+
+# User error.
+UserError = (message) ->
+  error = Error.call this, message
+  error.name = "UserError"
+  return error
+UserError.prototype.__proto__ = Error.prototype
+global.UserError = UserError

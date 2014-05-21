@@ -1,11 +1,15 @@
 {_, _s} = require '../support'
 
 module.exports = class Router
-  route: (method, path, {action, controller, prefix}) ->
+  route: (method, path, args...) ->
+    fn = args.pop() if _(_(args).last()).isFunction()
+    {action, controller, prefix} = args[0] || {}
+
     throw new Error 'no method for route!' unless method
     throw new Error 'no path for route!' unless path
-    throw new Error "no action for #{method}:#{path} route!" unless action
-    throw new Error "no controller for #{method}:#{path} route!" unless action
+    unless fn
+      throw new Error "no action for #{method}:#{path} route!" unless action
+      throw new Error "no controller for #{method}:#{path} route!" unless controller
 
     app = _(@app).required('app')
     path = "#{prefix}#{path}" if prefix
@@ -16,15 +20,17 @@ module.exports = class Router
       # Need try/catch block to prevent ExpressJs from intercepting errors.
       try
         app.http.prepareAfterRouter req, res
-        @process controller, action
+        if fn
+          app.info "routing to function as #{app.request._format}"
+          fn(app.request._params)
+        else
+          app.info "routing to #{controller}.#{action} as #{app.request._format}"
+          @process controller, action
       catch err
         app.http.onError err, req, res, next
 
-  configure: (fn) -> fn new Router.Dsl(@)
-
   process: (controller, action) ->
     app = _(@app).required('app')
-    app.info "routing to #{controller}.#{action} as #{app.request._format}"
 
     klass = app[controller] || throw new Error "no '#{controller}' controller!"
     throw new Error "'#{controller}' isn't function!" unless _(klass).isFunction()
@@ -195,8 +201,10 @@ class Router.Dsl.Resource
     else throw new Error "unknown type '#{type}'!"
 
 # Add HTTP werb to router DSLs, use it to add custom werbs.
-Router.addWerb = (werb) ->
-  fn = (args...) -> @route werb, args...
-  Router.Dsl::[werb] = fn
+for werb in ['get', 'post', 'put', 'del', 'delete']
+  do (werb) ->
+    Router.Dsl::[werb] = (args...) -> @route werb, args...
+    Router::[werb] = (args...) -> @route werb, args...
 
-Router.addWerb werb for werb in ['get', 'post', 'put', 'del', 'delete']
+# Adding `resource` method directly to Router.
+Router::resource = (args...) -> new Router.Dsl(@).resource args...
