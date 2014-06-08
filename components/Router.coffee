@@ -54,38 +54,57 @@ class Router.Dsl
 
     resource = new Router.Dsl.Resource(@router, [name], options)
     fn? resource
+    resource._generateMethods()
+    null
 
 # Resource.
 class Router.Dsl.Resource
   @commonActions = ['index', 'create', 'show', 'update', 'destroy']
 
-  constructor: (@router, @names, options) ->
+  constructor: (@router, @names, @options) ->
     @names = _(names).clone()
     @name    = names.pop()
     @parents = ([name, _s.isPlural(name), _s.singularize(name)] for name in names)
 
-    withOptions = (opts) -> _(opts).extend options
+    @beforeRoutes = []
+    @afterRoutes  = []
+
+  # Express.js router has order for routes, routes added first have priority.
+  # Because of this we need to add resource's routes in 3 steps.
+  # - First should be collection and member routes.
+  # - Second should be standard resource routes.
+  # - Latest should be nested routes.
+  _generateMethods: ->
+    fn() while fn = @beforeRoutes.shift()
+    @_addResourceMethods()
+    fn() while fn = @afterRoutes.shift()
+
+  _addResourceMethods: ->
+    withOptions = (opts) => _(opts).extend @options
 
     if _s.isPlural @name
       # Plural resource.
-      @collection 'get',    withOptions action: 'index'
-      @collection 'get',    withOptions action: 'new', singularNamedPath: true
-      @collection 'post',   withOptions action: 'create'
-      @member     'get',    withOptions action: 'show'
-      @member     'get',    withOptions action: 'edit'
-      @member     'put',    withOptions action: 'update'
-      @member     'delete', withOptions action: 'destroy'
+      @_add 'collection', 'get',    withOptions action: 'index'
+      @_add 'collection', 'get',    withOptions action: 'new', singularNamedPath: true
+      @_add 'collection', 'post',   withOptions action: 'create'
+      @_add 'member',     'get',    withOptions action: 'show'
+      @_add 'member',     'get',    withOptions action: 'edit'
+      @_add 'member',     'put',    withOptions action: 'update'
+      @_add 'member',     'delete', withOptions action: 'destroy'
     else
       # Singular resource.
-      @collection 'get',    withOptions action: 'show'
-      @collection 'get',    withOptions action: 'new'
-      @collection 'post',   withOptions action: 'create'
-      @collection 'get',    withOptions action: 'edit'
-      @collection 'put',    withOptions action: 'update'
-      @collection 'delete', withOptions action: 'destroy'
+      @_add 'collection', 'get',    withOptions action: 'show'
+      @_add 'collection', 'get',    withOptions action: 'new'
+      @_add 'collection', 'post',   withOptions action: 'create'
+      @_add 'collection', 'get',    withOptions action: 'edit'
+      @_add 'collection', 'put',    withOptions action: 'update'
+      @_add 'collection', 'delete', withOptions action: 'destroy'
 
-  member     : (method, options) -> @_add 'member', method, options
-  collection : (method, options) -> @_add 'collection', method, options
+  member     : (method, options) ->
+    @beforeRoutes.push => @_add 'member', method, options
+
+  collection : (method, options) ->
+    @beforeRoutes.push => @_add 'collection', method, options
 
   resource : (name, args...) ->
     fn      = args.pop() if _(args[args.length - 1]).isFunction()
@@ -94,7 +113,9 @@ class Router.Dsl.Resource
     names = _(@names).clone()
     names.push name
     resource = new Router.Dsl.Resource(@router, names, options)
-    fn? resource
+    @afterRoutes.push =>
+      fn? resource
+      resource._generateMethods()
 
   _add: (type, method, options = {}) ->
     [name, parents] = [@name, @parents]

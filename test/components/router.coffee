@@ -8,9 +8,10 @@ describe "Router", ->
   beforeEach ->
     @router = new Router()
     @router.app = app
-    [@createdRoutes, @createdNamedPaths] = [{}, {}]
+    [@createdRoutes, @createdNamedPaths, @createdRoutesOrdered] = [{}, {}, []]
     @router.route = (method, path, {action, controller, prefix}) =>
       @createdRoutes["#{method}:#{prefix || ''}#{path}"] = "#{controller}.#{action}"
+      @createdRoutesOrdered.push "#{method}:#{prefix || ''}#{path}"
     @router._namedPath = (name, fn) => @createdNamedPaths[name] = fn
 
     @checkRoutes = (expectedRoutes) ->
@@ -190,4 +191,39 @@ describe "Router", ->
 
     @checkNamedPaths [
       ['userPostCommentsPath',    ['u1', 'p1'],       '/users/u1/posts/p1/comments']
+    ]
+
+  it.only "should order routes properly", ->
+    @router.resource 'posts', (posts) ->
+      posts.member     'post', action: 'publish'
+      posts.collection 'get',  action: 'count'
+      posts.resource 'comments', (comments) ->
+        comments.member     'post', action: 'publish'
+        comments.collection 'get',  action: 'count'
+
+    expect(@createdRoutesOrdered).to.eql [
+      # Member and collection routes should be first.
+      'post:/posts/:id/publish'
+      'get:/posts/count'
+
+      # Standard resource routes should be second.
+      'get:/posts'
+      'get:/posts/new'
+      'post:/posts'
+      'get:/posts/:id'
+      'get:/posts/:id/edit'
+      'put:/posts/:id'
+      'delete:/posts/:id'
+
+      # Nested routes should be last.
+      'post:/posts/:postId/comments/:id/publish'
+      'get:/posts/:postId/comments/count'
+
+      'get:/posts/:postId/comments'
+      'get:/posts/:postId/comments/new'
+      'post:/posts/:postId/comments'
+      'get:/posts/:postId/comments/:id'
+      'get:/posts/:postId/comments/:id/edit'
+      'put:/posts/:postId/comments/:id'
+      'delete:/posts/:postId/comments/:id'
     ]
