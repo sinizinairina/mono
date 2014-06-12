@@ -193,7 +193,7 @@ describe "Router", ->
       ['userPostCommentsPath',    ['u1', 'p1'],       '/users/u1/posts/p1/comments']
     ]
 
-  it.only "should order routes properly", ->
+  it "should order routes properly", ->
     @router.resource 'posts', (posts) ->
       posts.member     'post', action: 'publish'
       posts.collection 'get',  action: 'count'
